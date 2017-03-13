@@ -9,8 +9,8 @@ var OrderEntry = function(color, quantity) {
   this.color = color;
   this.quantity = quantity;
 }
-var ClientOrder = function(clientId) {
-  this.clientId = clientId;
+var ClientOrder = function(clientName) {
+  this.clientName = clientName;
   this.toPrepare = [];
   this.prepared = [];
 }
@@ -62,7 +62,7 @@ app.get('/stock', function(req, res) {
 })
 
 app.get('/clientOrders', function(req, res) {
-  res.json({clientOrders: clientOrders});
+  res.json(clientOrders);
 })
 
 app.post('/newClientOrder', function(req, res) {
