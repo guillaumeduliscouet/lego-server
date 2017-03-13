@@ -101,4 +101,5 @@ app.post('/stockOut', stormpath.authenticationRequired, function(req, res) {
   }
 })
 
-app.listen(process.env.PORT || 3000);
+var listener = app.listen(process.env.PORT || 3000);
+console.log('Listening on port ' + listener.address().port);
