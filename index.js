@@ -1,7 +1,8 @@
-var express = require('express')
-var stormpath = require('express-stormpath')
-var bodyParser = require('body-parser')
-var app = express()
+var express = require('express');
+var bodyParser = require('body-parser');
+var app = express();
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: false}));
 
 //DATA STRUCT
 var OrderEntry = function(color, quantity) {
@@ -55,37 +56,26 @@ function tryUpdateOrder(color) {
   }
 }
 
-//STARTUP
-app.use(stormpath.init(app, {
-  web: {
-    produces: ['application/json']
-  }
-}))
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: false}));
-
 //ROUTES
-app.get('/stock', stormpath.authenticationRequired, function(req, res) {
+app.get('/stock', function(req, res) {
   res.json({stock : inStock});
 })
 
-app.get('/clientOrders', stormpath.authenticationRequired, function(req, res) {
+app.get('/clientOrders', function(req, res) {
   res.json({clientOrders: clientOrders});
 })
 
-app.post('/newClientOrder', stormpath.authenticationRequired, function(req, res) {
-  var newClientOrder = req.body.clientOrder;
-  newClientOrder.clientId = req.user.email;
+app.post('/newClientOrder', function(req, res) {
   clientOrders.push(req.body.clientOrder);
   res.status(200).end();
 })
 
-app.post('/stockIn', stormpath.authenticationRequired, function(req, res) {
+app.post('/stockIn', function(req, res) {
   inStock.push(req.body.stockEntry);
   res.status(200).end();
 })
 
-app.post('/stockOut', stormpath.authenticationRequired, function(req, res) {
+app.post('/stockOut', function(req, res) {
   var index = isInStock(req.body.stockEntry.id);
   if(index != -1) {
     if(tryUpdateOrder(req.body.stockEntry.color)) {
