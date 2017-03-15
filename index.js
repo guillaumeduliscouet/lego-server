@@ -9,10 +9,10 @@ var OrderEntry = function(color, quantity) {
   this.color = color;
   this.quantity = quantity;
 }
-var ClientOrder = function(clientName) {
+var ClientOrder = function(clientName, toPrepare, prepared) {
   this.clientName = clientName;
-  this.toPrepare = [];
-  this.prepared = [];
+  this.toPrepare = toPrepare;
+  this.prepared = prepared;
 }
 var StockEntry = function(id, color) {
   this.id = id;
@@ -20,12 +20,23 @@ var StockEntry = function(id, color) {
 }
 
 //DATA
-var inStock = [];
-inStock.push(new StockEntry("123456789", "blue"));
-inStock.push(new StockEntry("123456790", "green"));
-var clientOrders = [];
+var inStock;
+var clientOrders;
+initData();
 
 //FUNCTIONS
+function initData() {
+  inStock = [];
+  clientOrders = [];
+
+  inStock.push(new StockEntry("40:2D:37:07:00:03:04:E0", "bleu"));
+  inStock.push(new StockEntry("1F:EF:E1:00:00:03:04:E0", "noir"));
+
+  var toPrepare = [];
+  toPrepare.push(new OrderEntry("bleu", 1))
+  clientOrders.push(new ClientOrder("Bob", toPrepare, []))
+}
+
 function isInStock(id) {
   for(i = 0; i < inStock.length; i++) {
     if(id === inStock[i].id) {
@@ -57,8 +68,13 @@ function tryUpdateOrder(color) {
 }
 
 //ROUTES
+app.get('/init', function(req, res) {
+  initData();
+  res.json(inStock);
+})
+
 app.get('/stock', function(req, res) {
-  res.json({stock : inStock});
+  res.json(inStock);
 })
 
 app.get('/clientOrders', function(req, res) {
