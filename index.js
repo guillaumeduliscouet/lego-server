@@ -92,9 +92,9 @@ app.post('/stockIn', function(req, res) {
 })
 
 app.post('/stockOut', function(req, res) {
-  var index = isInStock(req.body.stockEntry.id);
+  var index = isInStock(req.body.id);
   if(index != -1) {
-    if(tryUpdateOrder(req.body.stockEntry.color)) {
+    if(tryUpdateOrder(req.body.color)) {
       inStock.splice(index, 1);
       res.status(200).end();
     }
