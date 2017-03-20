@@ -82,14 +82,14 @@ app.get('/clientOrders', function(req, res) {
 })
 
 app.post('/newClientOrder', function(req, res) {
-  clientOrders.push(req.body.clientOrder);
+  clientOrders.push(req.body);
   res.status(200).end();
 })
 
 app.post('/stockIn', function(req, res) {
   var index = isInStock(req.body.id);
   if(index == -1) {
-    inStock.push(new StockEntry(req.body.id, req.body.color));
+    inStock.push(req.body);
     res.status(200).end();
   }
   else {  // the lego is already in stock, do nothing
