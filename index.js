@@ -87,8 +87,14 @@ app.post('/newClientOrder', function(req, res) {
 })
 
 app.post('/stockIn', function(req, res) {
-  inStock.push(new StockEntry(req.body.id, req.body.color));
-  res.status(200).end();
+  var index = isInStock(req.body.id);
+  if(index == -1) {
+    inStock.push(new StockEntry(req.body.id, req.body.color));
+    res.status(200).end();
+  }
+  else {  // the lego is already in stock, do nothing
+    res.status(201).end();
+  }
 })
 
 app.post('/stockOut', function(req, res) {
