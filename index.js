@@ -87,7 +87,7 @@ app.post('/newClientOrder', function(req, res) {
 })
 
 app.post('/stockIn', function(req, res) {
-  inStock.push(req.body.stockEntry);
+  inStock.push(new StockEntry(req.body.id, req.body.color));
   res.status(200).end();
 })
 
