@@ -21,20 +21,15 @@ var StockEntry = function(id, color) {
 
 //DATA
 var inStock;
+var inStockGroups;
 var clientOrders;
 initData();
 
 //FUNCTIONS
 function initData() {
   inStock = [];
+  inStockGroups = [];
   clientOrders = [];
-
-  inStock.push(new StockEntry("40:2D:37:07:00:03:04:E0", "bleu"));
-  inStock.push(new StockEntry("1F:EF:E1:00:00:03:04:E0", "noir"));
-
-  var toPrepare = [];
-  toPrepare.push(new OrderEntry("bleu", 1))
-  clientOrders.push(new ClientOrder("Bob", toPrepare, []))
 }
 
 function isInStock(id) {
@@ -67,6 +62,27 @@ function tryUpdateOrder(color) {
   }
 }
 
+/*inStockGroups takes into account the orders to prepare, we need to update it
+  with every new order*/
+function updateStockGroupsOrder(toPrepare) {
+  for(i = 0; i < toPrepare.length; i++) {
+    updateStockGroups(toPrepare[i].color, -toPrepare[i].quantity);
+  }
+}
+
+function updateStockGroups(color, quantity) {
+  var i = 0;
+  for (i; i < inStockGroups.length; i++) {
+    if(inStockGroups[i].color === color) {
+      inStockGroups[i].quantity += quantity;
+      break;
+    }
+  }
+  if (i == inStockGroups.length) {
+    inStockGroups.push(new OrderEntry(color, quantity));
+  }
+}
+
 //ROUTES
 app.get('/init', function(req, res) {
   initData();
@@ -77,11 +93,16 @@ app.get('/stock', function(req, res) {
   res.json(inStock);
 })
 
+app.get('/stockGroups', function(req, res) {
+  res.json(inStockGroups);
+})
+
 app.get('/clientOrders', function(req, res) {
   res.json(clientOrders);
 })
 
 app.post('/newClientOrder', function(req, res) {
+  updateStockGroupsOrder(req.body.toPrepare);
   clientOrders.push(req.body);
   res.status(200).end();
 })
@@ -89,6 +110,7 @@ app.post('/newClientOrder', function(req, res) {
 app.post('/stockIn', function(req, res) {
   var index = isInStock(req.body.id);
   if(index == -1) {
+    updateStockGroups(req.body.color, 1);
     inStock.push(req.body);
     res.status(200).end();
   }
