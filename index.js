@@ -78,8 +78,10 @@ function updateStockGroups(color, quantity) {
       break;
     }
   }
-  if (i == inStockGroups.length) {
+  if (i == inStockGroups.length) {  //new entry, add it
     inStockGroups.push(new OrderEntry(color, quantity));
+  } else if(inStockGroups[i].quantity == 0) { //entry to 0, remove it
+    inStockGroups.splice(i,1);
   }
 }
 
